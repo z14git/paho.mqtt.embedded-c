@@ -21,6 +21,22 @@ where the conventional language choice is C++, which explains the language choic
 The *MQTTClient-C* directory contains a C equivalent of MQTTClient, for those platforms where C++ is not supported or the convention.  As far
 as possible it is a direct translation from *MQTTClient*.
 
+## 使用说明
+
+1. 将本仓库代码复制到 [hi3861_hdu_iot_application](https://gitee.com/HiSpark/hi3861_hdu_iot_application) 的 `src/third_party/pahomqtt` 目录下。即本 README.md 的路径为 `src/third_party/pahomqtt/README.md`。
+2. 修改应用的 `BUILD.gn`:
+   - 在 `include_dirs` 中，增加：
+
+        ```
+        "//third_party/pahomqtt/MQTTPacket/src",
+        "//third_party/pahomqtt/MQTTClient-C/src",
+        "//third_party/pahomqtt/MQTTClient-C/src/liteOS",
+        ```
+   - 在 `deps` 中，增加：
+        ```
+        "//third_party/pahomqtt:pahomqtt_static",
+        ```
+
 ## Build requirements / compilation
 
 CMake builds for the various packages have been introduced, along with Travis-CI configuration for automated build & testing.  The basic
