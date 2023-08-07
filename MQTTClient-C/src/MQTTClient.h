@@ -34,6 +34,8 @@
   #define DLLExport
 #endif
 
+#include "liteOS/MQTTLiteOS.h"
+
 #include "MQTTPacket.h"
 
 #if defined(MQTTCLIENT_PLATFORM_HEADER)

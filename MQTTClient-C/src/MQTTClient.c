@@ -75,7 +75,7 @@ void MQTTClientInit(MQTTClient* c, Network* network, unsigned int command_timeou
     TimerInit(&c->last_sent);
     TimerInit(&c->last_received);
 #if defined(MQTT_TASK)
-	  MutexInit(&c->mutex);
+	  mqttMutexInit(&c->mutex);
 #endif
 }
 
@@ -373,12 +373,12 @@ void MQTTRun(void* parm)
 	while (1)
 	{
 #if defined(MQTT_TASK)
-		MutexLock(&c->mutex);
+		mqttMutexLock(&c->mutex);
 #endif
 		TimerCountdownMS(&timer, 500); /* Don't wait too long if no traffic is incoming */
 		cycle(c, &timer);
 #if defined(MQTT_TASK)
-		MutexUnlock(&c->mutex);
+		mqttMutexUnlock(&c->mutex);
 #endif
 	}
 }
@@ -418,7 +418,7 @@ int MQTTConnectWithResults(MQTTClient* c, MQTTPacket_connectData* options, MQTTC
     int len = 0;
 
 #if defined(MQTT_TASK)
-	  MutexLock(&c->mutex);
+	  mqttMutexLock(&c->mutex);
 #endif
 	  if (c->isconnected) /* don't send connect packet again if we are already connected */
 		  goto exit;
@@ -458,7 +458,7 @@ exit:
     }
 
 #if defined(MQTT_TASK)
-	  MutexUnlock(&c->mutex);
+	  mqttMutexUnlock(&c->mutex);
 #endif
 
     return rc;
@@ -524,7 +524,7 @@ int MQTTSubscribeWithResults(MQTTClient* c, const char* topicFilter, enum QoS qo
     topic.cstring = (char *)topicFilter;
 
 #if defined(MQTT_TASK)
-	  MutexLock(&c->mutex);
+	  mqttMutexLock(&c->mutex);
 #endif
 	  if (!c->isconnected)
 		    goto exit;
@@ -556,7 +556,7 @@ exit:
     if (rc == FAILURE)
         MQTTCloseSession(c);
 #if defined(MQTT_TASK)
-	  MutexUnlock(&c->mutex);
+	  mqttMutexUnlock(&c->mutex);
 #endif
     return rc;
 }
@@ -579,7 +579,7 @@ int MQTTUnsubscribe(MQTTClient* c, const char* topicFilter)
     int len = 0;
 
 #if defined(MQTT_TASK)
-	  MutexLock(&c->mutex);
+	  mqttMutexLock(&c->mutex);
 #endif
 	  if (!c->isconnected)
 		  goto exit;
@@ -608,7 +608,7 @@ exit:
     if (rc == FAILURE)
         MQTTCloseSession(c);
 #if defined(MQTT_TASK)
-	  MutexUnlock(&c->mutex);
+	  mqttMutexUnlock(&c->mutex);
 #endif
     return rc;
 }
@@ -623,7 +623,7 @@ int MQTTPublish(MQTTClient* c, const char* topicName, MQTTMessage* message)
     int len = 0;
 
 #if defined(MQTT_TASK)
-	  MutexLock(&c->mutex);
+	  mqttMutexLock(&c->mutex);
 #endif
 	  if (!c->isconnected)
 		    goto exit;
@@ -670,7 +670,7 @@ exit:
     if (rc == FAILURE)
         MQTTCloseSession(c);
 #if defined(MQTT_TASK)
-	  MutexUnlock(&c->mutex);
+	  mqttMutexUnlock(&c->mutex);
 #endif
     return rc;
 }
@@ -683,7 +683,7 @@ int MQTTDisconnect(MQTTClient* c)
     int len = 0;
 
 #if defined(MQTT_TASK)
-	MutexLock(&c->mutex);
+	mqttMutexLock(&c->mutex);
 #endif
     TimerInit(&timer);
     TimerCountdownMS(&timer, c->command_timeout_ms);
@@ -694,7 +694,7 @@ int MQTTDisconnect(MQTTClient* c)
     MQTTCloseSession(c);
 
 #if defined(MQTT_TASK)
-	  MutexUnlock(&c->mutex);
+	  mqttMutexUnlock(&c->mutex);
 #endif
     return rc;
 }
